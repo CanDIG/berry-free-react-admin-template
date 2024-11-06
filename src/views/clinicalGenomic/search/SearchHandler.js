@@ -110,7 +110,7 @@ function SearchHandler({ setLoading }) {
         }
 
         summaryFetchAbort.current = newAbort;
-    }, [JSON.stringify(queryNoPageSize), JSON.stringify(reader.donorLists), JSON.stringify(reader.genomic), JSON.stringify(reader.filter)]);
+    }, [reader.reqNum]);
 
     // Query 2: when the search query changes, re-query the server
     useEffect(() => {
@@ -127,12 +127,14 @@ function SearchHandler({ setLoading }) {
                     // Reorder the data, and fill out the patients per cohort
                     const clinicalData = {};
                     data.forEach((site) => {
-                        clinicalData[site.location.name] = site?.results;
+                        if ('results' in site) {
+                            clinicalData[site.location.name] = site?.results;
+                        }
                     });
 
                     const genomicData = data
                         .map((site) =>
-                            site.results.genomic?.map((caseData) => {
+                            site?.results?.genomic?.map((caseData) => {
                                 caseData.location = site.location;
                                 return caseData;
                             })
@@ -156,7 +158,7 @@ function SearchHandler({ setLoading }) {
         }
 
         clinicalFetchAbort.current = newAbort;
-    }, [JSON.stringify(reader.query), JSON.stringify(reader.donorLists), JSON.stringify(reader.genomic), JSON.stringify(reader.filter)]);
+    }, [reader.reqNum]);
 
     // Query 3: when the selected donor changes, re-query the server
     useEffect(() => {

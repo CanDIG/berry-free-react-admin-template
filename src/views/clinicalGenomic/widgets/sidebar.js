@@ -64,7 +64,7 @@ const Root = styled('div')(({ theme }) => ({
         borderRadius: '25px',
         border: `1px solid ${theme.palette.primary.main}`,
         height: '1.5em',
-        width: '90%',
+        width: '45%',
         boxShadow: `0px 2px 4px rgba(0, 0, 0, 0.2)`
     },
     [`& .${classes.lockIcon}`]: {
@@ -421,8 +421,12 @@ function Sidebar() {
 
     // On our first load, remove all query parameters
     useEffect(() => {
-        writerContext(() => ({}));
+        writerContext(() => ({ reqNum: 0 }));
     }, [writerContext]);
+
+    const triggerSearch = () => {
+        writerContext((old) => ({ ...old, reqNum: 'reqNum' in old ? old.reqNum + 1 : 0 }));
+    };
 
     function resetButton() {
         // Reset state variables for checkboxes and dropdowns
@@ -446,7 +450,7 @@ function Sidebar() {
             filter: {
                 node: [readerContext?.programs?.map((loc) => loc.location.name) || []], // Set your default nodes
                 exclude_cohorts: [
-                    readerContext?.programs?.map((loc) => loc?.results?.items.map((cohort) => cohort.program_id)).flat(1) || []
+                    readerContext?.programs?.map((loc) => loc?.results?.items?.map((cohort) => cohort.program_id)).flat(1) || []
                 ], // Set cohorts to empty array or whichever default value you want
                 query: {}
             }
@@ -464,8 +468,8 @@ function Sidebar() {
 
     // Parse out what we need:
     const sites = readerContext?.programs?.map((loc) => loc.location.name) || [];
-    const cohorts = readerContext?.federation?.map((loc) => loc.results.map((cohort) => cohort.program_id))?.flat(1) || [] || [];
-    const authorizedCohorts = readerContext?.programs?.flatMap((loc) => loc?.results?.items.map((cohort) => cohort.program_id)) || [];
+    const cohorts = readerContext?.federation?.map((loc) => loc.results?.map((cohort) => cohort.program_id) || [])?.flat(1) || [];
+    const authorizedCohorts = readerContext?.programs?.flatMap((loc) => loc?.results?.items?.map((cohort) => cohort.program_id)) || [];
     const treatmentTypes = ExtractSidebarElements('treatment_types');
     const tumourPrimarySites = ExtractSidebarElements('tumour_primary_sites');
     const systemicTherapyDrugNames = ExtractSidebarElements('drug_names');
@@ -493,6 +497,9 @@ function Sidebar() {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Button className={classes.button} onClick={() => resetButton()}>
                     Reset Filters
+                </Button>
+                <Button className={classes.button} onClick={triggerSearch}>
+                    Search
                 </Button>
             </div>
             <SidebarGroup name="Node">
