@@ -110,7 +110,7 @@ function SearchHandler({ setLoading }) {
         }
 
         summaryFetchAbort.current = newAbort;
-    }, [JSON.stringify(queryNoPageSize), JSON.stringify(reader.donorLists), JSON.stringify(reader.genomic), JSON.stringify(reader.filter)]);
+    }, [reader.reqNum]);
 
     // Query 2: when the search query changes, re-query the server
     useEffect(() => {
@@ -158,7 +158,7 @@ function SearchHandler({ setLoading }) {
         }
 
         clinicalFetchAbort.current = newAbort;
-    }, [JSON.stringify(reader.query), JSON.stringify(reader.donorLists), JSON.stringify(reader.genomic), JSON.stringify(reader.filter)]);
+    }, [reader.reqNum]);
 
     // Query 3: when the selected donor changes, re-query the server
     useEffect(() => {

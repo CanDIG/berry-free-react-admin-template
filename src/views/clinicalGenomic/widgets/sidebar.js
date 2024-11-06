@@ -421,8 +421,12 @@ function Sidebar() {
 
     // On our first load, remove all query parameters
     useEffect(() => {
-        writerContext(() => ({}));
+        writerContext(() => ({reqNum: 0}));
     }, [writerContext]);
+
+    const triggerSearch = (() => {
+        writerContext((old) => ({...old, reqNum: 'reqNum' in old ? old.reqNum + 1 : 0}));
+    });
 
     function resetButton() {
         // Reset state variables for checkboxes and dropdowns
@@ -564,6 +568,11 @@ function Sidebar() {
                     setChecked={setSelectedSystemicTherapy}
                 />
             </SidebarGroup>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Button className={classes.button} onClick={triggerSearch}>
+                    Search
+                </Button>
+            </div>
         </Root>
     );
 }
