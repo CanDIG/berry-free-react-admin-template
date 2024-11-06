@@ -421,12 +421,12 @@ function Sidebar() {
 
     // On our first load, remove all query parameters
     useEffect(() => {
-        writerContext(() => ({reqNum: 0}));
+        writerContext(() => ({ reqNum: 0 }));
     }, [writerContext]);
 
-    const triggerSearch = (() => {
-        writerContext((old) => ({...old, reqNum: 'reqNum' in old ? old.reqNum + 1 : 0}));
-    });
+    const triggerSearch = () => {
+        writerContext((old) => ({ ...old, reqNum: 'reqNum' in old ? old.reqNum + 1 : 0 }));
+    };
 
     function resetButton() {
         // Reset state variables for checkboxes and dropdowns
