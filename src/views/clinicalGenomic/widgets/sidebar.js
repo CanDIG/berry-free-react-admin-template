@@ -64,7 +64,7 @@ const Root = styled('div')(({ theme }) => ({
         borderRadius: '25px',
         border: `1px solid ${theme.palette.primary.main}`,
         height: '1.5em',
-        width: '90%',
+        width: '45%',
         boxShadow: `0px 2px 4px rgba(0, 0, 0, 0.2)`
     },
     [`& .${classes.lockIcon}`]: {
@@ -498,6 +498,9 @@ function Sidebar() {
                 <Button className={classes.button} onClick={() => resetButton()}>
                     Reset Filters
                 </Button>
+                <Button className={classes.button} onClick={triggerSearch}>
+                    Search
+                </Button>
             </div>
             <SidebarGroup name="Node">
                 <StyledCheckboxList
@@ -568,11 +571,6 @@ function Sidebar() {
                     setChecked={setSelectedSystemicTherapy}
                 />
             </SidebarGroup>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Button className={classes.button} onClick={triggerSearch}>
-                    Search
-                </Button>
-            </div>
         </Root>
     );
 }
