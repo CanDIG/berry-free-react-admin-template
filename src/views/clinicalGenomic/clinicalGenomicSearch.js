@@ -23,7 +23,8 @@ const classes = {
     noSidebarOffset: `${PREFIX}-noSidebarOffset`,
     headerSpacing: `${PREFIX}-headerSpacing`,
     anchor: `${PREFIX}-anchor`,
-    navigationLink: `${PREFIX}-navigationLink`
+    navigationLink: `${PREFIX}-navigationLink`,
+    mainContent: `${PREFIX}-mainContent`
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
@@ -61,6 +62,10 @@ const Root = styled('div')(({ _ }) => ({
     [`& .${classes.navigationLink}`]: {
         float: 'right',
         textAlign: 'right'
+    },
+
+    [`& .${classes.mainContent}`]: {
+        padding: '16px !important'
     }
 }));
 
@@ -160,7 +165,7 @@ function ClinicalGenomicSearch() {
                                 key={section.id}
                                 border
                                 sx={{ borderRadius: customization.borderRadius * 0.25 }}
-                                contentClass={{ padding: '16px !important' }}
+                                contentClass={classes.mainContent}
                             >
                                 <SearchIndicator />
                             </StyledMainCard>
