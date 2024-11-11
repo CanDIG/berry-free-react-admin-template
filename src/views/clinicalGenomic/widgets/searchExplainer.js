@@ -8,17 +8,15 @@ const PREFIX = 'SearchExplainer';
 const Root = styled('div')(({ theme }) => ({
     marginLeft: '0.5em',
     marginRight: '0.5em',
-    [`& .${PREFIX}-divider`]: {
-        borderColor: theme.palette.primary.main,
-        marginTop: 20,
-        marginBottom: 4
+    [`& .${PREFIX}-chiptext`]: {
+        textTransform: 'capitalize'
     },
-    [`& .${PREFIX}-header`]: {
-        textAlign: 'center'
+    [`& .${PREFIX}-background`]: {
+        padding: '0.5em',
+        backgroundColor: theme.palette.primary.light
     },
-    [`& .${PREFIX}-spacing`]: {
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2)
+    [`& .${PREFIX}-chip`]: {
+        backgroundColor: 'white'
     }
 }));
 
@@ -32,7 +30,10 @@ function SearchExplainer() {
     if (query !== undefined) {
         Object.keys(query).forEach((key) => {
             if (key !== undefined && query[key] !== undefined) {
-                const newVal = query[key].replaceAll('|', ' OR ');
+                const splitQuery = query[key].split('|');
+                const newVal = splitQuery.flatMap((value) => [<b key={value}> OR </b>, value]).slice(1);
+                const formattedKey = key.replaceAll('_', ' ');
+                newVal.splice(0, 0, <span className={`${PREFIX}-chiptext`}>{formattedKey}: </span>);
                 queryChips.push([key, newVal]);
             }
         });
@@ -47,16 +48,19 @@ function SearchExplainer() {
         () => (
             <Root>
                 {/* Header */}
-                <Box sx={{ border: 1, borderRadius: 2, borderColor: 'white' }}>
+                <Box className={`${PREFIX}-background`}>
                     {queryChips
                         .flatMap((chip) => [
-                            ' AND ',
+                            <b key={`${chip}b`}> AND </b>,
                             <Chip
                                 key={chip[0]}
-                                label={`${chip[0]}: ${chip[1]}`}
+                                label={chip[1]}
                                 onDelete={() => {
                                     writer((old) => ({ ...old, clear: chip[0] }));
                                 }}
+                                variant="outlined"
+                                color="primary"
+                                className={`${PREFIX}-chip`}
                             />
                         ])
                         .slice(1)}
