@@ -112,7 +112,7 @@ function SearchHandler({ setLoading }) {
         summaryFetchAbort.current = newAbort;
     }, [reader.reqNum]);
 
-    // Query 2: when the search query changes, re-query the server
+    // Query 3: when the search query changes, re-query the server
     useEffect(() => {
         // First, we abort any currently-running search promises
         clinicalFetchAbort.current.abort('New request started');
