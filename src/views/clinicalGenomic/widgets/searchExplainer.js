@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Chip } from '@mui/material';
-import { useSearchQueryReaderContext } from '../SearchResultsContext';
+import { useSearchQueryReaderContext, useSearchResultsWriterContext } from '../SearchResultsContext';
 
 const PREFIX = 'SearchExplainer';
 
@@ -24,6 +24,7 @@ const Root = styled('div')(({ theme }) => ({
 
 function SearchExplainer() {
     const reader = useSearchQueryReaderContext();
+    const writer = useSearchResultsWriterContext();
     const query = reader.query;
     const queryChips = [];
 
@@ -31,21 +32,38 @@ function SearchExplainer() {
     if (query !== undefined) {
         Object.keys(query).forEach((key) => {
             if (key !== undefined && query[key] !== undefined) {
-                const repl = query[key].replaceAll('|', ' OR ');
-                queryChips.push([key, repl]);
+                const newVal = query[key].replaceAll('|', ' OR ');
+                queryChips.push([key, newVal]);
             }
         });
     }
+
+    useEffect(() => {
+        writer((old) => ({ ...old, clear: '' }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [reader.donorID]);
 
     return useMemo(
         () => (
             <Root>
                 {/* Header */}
                 <Box sx={{ border: 1, borderRadius: 2, borderColor: 'white' }}>
-                    {queryChips.flatMap((chip) => [' AND ', <Chip key={chip[0]} label={`${chip[0]}: ${chip[1]}`} />]).slice(1)}
+                    {queryChips
+                        .flatMap((chip) => [
+                            ' AND ',
+                            <Chip
+                                key={chip[0]}
+                                label={`${chip[0]}: ${chip[1]}`}
+                                onDelete={() => {
+                                    writer((old) => ({ ...old, clear: chip[0] }));
+                                }}
+                            />
+                        ])
+                        .slice(1)}
                 </Box>
             </Root>
         ),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [reader.donorID]
     );
 }

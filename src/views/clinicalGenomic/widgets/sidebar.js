@@ -424,6 +424,74 @@ function Sidebar() {
         writerContext(() => ({ reqNum: 0 }));
     }, [writerContext]);
 
+    // Certain webpage components can cause the sidebar to clear a particular entry (e.g. the search explanation)
+    useEffect(() => {
+        console.log(readerContext.clear);
+        if (readerContext.clear === 'nodes') {
+            setSelectedNodes({});
+            writerContext((old) => ({
+                ...old,
+                filter: {
+                    ...old.filter,
+                    node: [readerContext?.programs?.map((loc) => loc.location.name) || []]
+                },
+                reqNum: old.reqNum + 1
+            }));
+        } else if (readerContext.clear === 'cohorts') {
+            setSelectedCohorts({});
+            writerContext((old) => ({
+                ...old,
+                filter: {
+                    ...old.filter,
+                    exclude_cohorts: [
+                        readerContext?.programs?.map((loc) => loc?.results?.items?.map((cohort) => cohort.program_id)).flat(1) || []
+                    ]
+                },
+                reqNum: old.reqNum + 1
+            }));
+        } else if (readerContext.clear === 'gene') {
+            setSelectedGenes('');
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.gene;
+                return retVal;
+            });
+        } else if (readerContext.clear === 'chr') {
+            setSelectedChromosomes('');
+            setStartPos('0');
+            setEndPos('0');
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.chrom;
+                delete retVal.query.gene;
+                delete retVal.query.assembly;
+                return retVal;
+            });
+        } else if (readerContext.clear === 'treatment') {
+            setSelectedTreatment({});
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.treatment;
+                return retVal;
+            });
+        } else if (readerContext.clear === 'primary_site') {
+            setSelectedPrimarySite({});
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.primary_site;
+                return retVal;
+            });
+        } else if (readerContext.clear === 'drug_name') {
+            setSelectedSystemicTherapy({});
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.drug_name;
+                return retVal;
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [readerContext.clear]);
+
     const triggerSearch = () => {
         writerContext((old) => ({ ...old, reqNum: 'reqNum' in old ? old.reqNum + 1 : 0 }));
     };
