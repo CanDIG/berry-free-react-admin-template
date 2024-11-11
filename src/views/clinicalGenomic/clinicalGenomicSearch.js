@@ -14,6 +14,7 @@ import SearchHandler from './search/SearchHandler';
 import GenomicData from './widgets/genomicData';
 import { SearchIndicator } from 'ui-component/LoadingIndicator/SearchIndicator';
 import AuthorizationSections from './widgets/authorizationSections';
+import SearchExplainer from './widgets/searchExplainer';
 
 const PREFIX = 'ClinicalGenomicSearch';
 
@@ -80,6 +81,11 @@ const StyledMainCard = styled(MainCard)((_) => ({
 }));
 
 const sections = [
+    {
+        id: 'search explainer',
+        header: 'Search Terms',
+        component: <SearchExplainer />
+    },
     {
         id: 'cohorts summary',
         header: 'Cohorts Summary',
