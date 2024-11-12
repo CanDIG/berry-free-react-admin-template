@@ -25,7 +25,8 @@ const classes = {
     headerSpacing: `${PREFIX}-headerSpacing`,
     anchor: `${PREFIX}-anchor`,
     navigationLink: `${PREFIX}-navigationLink`,
-    mainContent: `${PREFIX}-mainContent`
+    mainContent: `${PREFIX}-mainContent`,
+    test: `${PREFIX}-test`
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
@@ -50,7 +51,7 @@ const Root = styled('div')(({ _ }) => ({
     },
 
     [`& .${classes.headerSpacing}`]: {
-        height: 50
+        height: 140
     },
 
     [`& .${classes.anchor}`]: {
@@ -67,6 +68,11 @@ const Root = styled('div')(({ _ }) => ({
 
     [`& .${classes.mainContent}`]: {
         padding: '16px !important'
+    },
+
+    [`& .${classes.test}`]: {
+        position: 'relative',
+        display: 'flex'
     }
 }));
 
@@ -81,11 +87,11 @@ const StyledMainCard = styled(MainCard)((_) => ({
 }));
 
 const sections = [
-    {
+    /* {
         id: 'search explainer',
         header: 'Search Terms',
         component: <SearchExplainer />
-    },
+    }, */
     {
         id: 'cohorts summary',
         header: 'Cohorts Summary',
@@ -156,7 +162,9 @@ function ClinicalGenomicSearch() {
                             {section.header}
                         </Button>
                     ))}
+                    testA
                 </Toolbar>
+                <SearchExplainer />
             </AppBar>
             {/* Empty div to make sure the header takes up space */}
             <SearchHandler setLoading={setLoading} />

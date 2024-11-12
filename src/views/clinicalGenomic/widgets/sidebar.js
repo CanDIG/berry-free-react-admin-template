@@ -193,7 +193,7 @@ function StyledCheckboxList(props) {
             options={options}
             disableCloseOnSelect
             renderOption={(props, option, { selected }) => (
-                <li {...props} value={option}>
+                <li {...props} key={option}>
                     <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}

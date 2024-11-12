@@ -44,11 +44,14 @@ function SearchExplainer() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [reader.donorID]);
 
+    console.log(reader.donorID);
+
     return useMemo(
         () => (
             <Root>
                 {/* Header */}
                 <Box className={`${PREFIX}-background`}>
+                    <Chip variant="outlined" color="primary" className={`${PREFIX}-chip`} label="test" />
                     {queryChips
                         .flatMap((chip) => [
                             <b key={`${chip}b`}> AND </b>,
