@@ -162,8 +162,8 @@ function ClinicalGenomicSearch() {
                             {section.header}
                         </Button>
                     ))}
-                    testA
                 </Toolbar>
+                <br />
                 <SearchExplainer />
             </AppBar>
             {/* Empty div to make sure the header takes up space */}

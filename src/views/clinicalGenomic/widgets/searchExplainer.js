@@ -42,36 +42,37 @@ function SearchExplainer() {
     useEffect(() => {
         writer((old) => ({ ...old, clear: '' }));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [reader.donorID]);
-
-    console.log(reader.donorID);
+    }, [reader.reqNum]);
 
     return useMemo(
         () => (
             <Root>
                 {/* Header */}
                 <Box className={`${PREFIX}-background`}>
-                    <Chip variant="outlined" color="primary" className={`${PREFIX}-chip`} label="test" />
-                    {queryChips
-                        .flatMap((chip) => [
-                            <b key={`${chip}b`}> AND </b>,
-                            <Chip
-                                key={chip[0]}
-                                label={chip[1]}
-                                onDelete={() => {
-                                    writer((old) => ({ ...old, clear: chip[0] }));
-                                }}
-                                variant="outlined"
-                                color="primary"
-                                className={`${PREFIX}-chip`}
-                            />
-                        ])
-                        .slice(1)}
+                    {queryChips.length > 0 ? (
+                        queryChips
+                            .flatMap((chip) => [
+                                <b key={`${chip}b`}> AND </b>,
+                                <Chip
+                                    key={chip[0]}
+                                    label={chip[1]}
+                                    onDelete={() => {
+                                        writer((old) => ({ ...old, clear: chip[0] }));
+                                    }}
+                                    variant="outlined"
+                                    color="primary"
+                                    className={`${PREFIX}-chip`}
+                                />
+                            ])
+                            .slice(1)
+                    ) : (
+                        <Chip label="All results" variant="outlined" color="primary" className={`${PREFIX}-chip`} />
+                    )}
                 </Box>
             </Root>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [reader.donorID]
+        [reader.reqNum]
     );
 }
 
