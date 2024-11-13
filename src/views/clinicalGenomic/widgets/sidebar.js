@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import {
+    Chip,
     Checkbox,
     FormControl,
     FormControlLabel,
@@ -193,7 +194,7 @@ function StyledCheckboxList(props) {
             options={options}
             disableCloseOnSelect
             renderOption={(props, option, { selected }) => (
-                <li {...props} value={option}>
+                <li {...props} key={option}>
                     <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}
@@ -205,6 +206,9 @@ function StyledCheckboxList(props) {
                 </li>
             )}
             renderInput={(params) => <TextField {...params} label={groupName} />}
+            renderTags={(tagValue, getTagProps) =>
+                tagValue.map((option, index) => <Chip {...getTagProps({ index })} key={option} label={option} />)
+            }
             // set width to match parent
             sx={{ width: '100%', paddingTop: '0.5em', paddingBottom: '0.5em' }}
             onChange={(_, value, reason) => {
@@ -423,6 +427,67 @@ function Sidebar() {
     useEffect(() => {
         writerContext(() => ({ reqNum: 0 }));
     }, [writerContext]);
+
+    // Certain webpage components can cause the sidebar to clear a particular entry (e.g. the search explanation)
+    useEffect(() => {
+        if (readerContext.clear === 'nodes') {
+            setSelectedNodes({});
+            writerContext((old) => ({
+                ...old,
+                filter: {
+                    ...old.filter,
+                    node: [readerContext?.programs?.map((loc) => loc.location.name) || []]
+                },
+                reqNum: old.reqNum + 1
+            }));
+        } else if (readerContext.clear === 'cohorts') {
+            setSelectedCohorts({});
+            writerContext((old) => ({
+                ...old,
+                filter: {
+                    ...old.filter,
+                    exclude_cohorts: [
+                        readerContext?.programs?.map((loc) => loc?.results?.items?.map((cohort) => cohort.program_id)).flat(1) || []
+                    ]
+                },
+                reqNum: old.reqNum + 1
+            }));
+        } else if (readerContext.clear === 'gene' || readerContext.clear === 'chrom' || readerContext.clear === 'assembly') {
+            setSelectedGenes('');
+            setSelectedChromosomes('');
+            setStartPos('0');
+            setEndPos('0');
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.chrom;
+                delete retVal.query.gene;
+                delete retVal.query.assembly;
+                return retVal;
+            });
+        } else if (readerContext.clear === 'treatment') {
+            setSelectedTreatment({});
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.treatment;
+                return retVal;
+            });
+        } else if (readerContext.clear === 'primary_site') {
+            setSelectedPrimarySite({});
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.primary_site;
+                return retVal;
+            });
+        } else if (readerContext.clear === 'drug_name') {
+            setSelectedSystemicTherapy({});
+            writerContext((old) => {
+                const retVal = { ...old, reqNum: old.reqNum + 1 };
+                delete retVal.query.drug_name;
+                return retVal;
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [readerContext.clear]);
 
     const triggerSearch = () => {
         writerContext((old) => ({ ...old, reqNum: 'reqNum' in old ? old.reqNum + 1 : 0 }));

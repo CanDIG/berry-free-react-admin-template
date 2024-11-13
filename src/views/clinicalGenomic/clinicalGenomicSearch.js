@@ -14,6 +14,7 @@ import SearchHandler from './search/SearchHandler';
 import GenomicData from './widgets/genomicData';
 import { SearchIndicator } from 'ui-component/LoadingIndicator/SearchIndicator';
 import AuthorizationSections from './widgets/authorizationSections';
+import SearchExplainer from './widgets/searchExplainer';
 
 const PREFIX = 'ClinicalGenomicSearch';
 
@@ -22,9 +23,11 @@ const classes = {
     sidebarOffset: `${PREFIX}-sidebarOffset`,
     noSidebarOffset: `${PREFIX}-noSidebarOffset`,
     headerSpacing: `${PREFIX}-headerSpacing`,
+    headerSize: `${PREFIX}-headerSize`,
     anchor: `${PREFIX}-anchor`,
     navigationLink: `${PREFIX}-navigationLink`,
-    mainContent: `${PREFIX}-mainContent`
+    mainContent: `${PREFIX}-mainContent`,
+    toolbar: `${PREFIX}-toolbar`
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
@@ -39,24 +42,28 @@ const Root = styled('div')(({ _ }) => ({
     },
 
     [`& .${classes.sidebarOffset}`]: {
-        width: 'calc(100% - 320px)',
+        width: 'calc(100% - 300px)',
         left: 280
     },
 
     [`& .${classes.noSidebarOffset}`]: {
-        width: 'calc(100% - 80px)',
-        left: 40
+        width: 'calc(100% - 35px)',
+        left: 18
+    },
+
+    [`& .${classes.headerSize}`]: {
+        height: 110
     },
 
     [`& .${classes.headerSpacing}`]: {
-        height: 50
+        height: 70
     },
 
     [`& .${classes.anchor}`]: {
         display: 'block',
         position: 'relative',
         visibility: 'hidden',
-        top: -150
+        top: -250
     },
 
     [`& .${classes.navigationLink}`]: {
@@ -66,6 +73,13 @@ const Root = styled('div')(({ _ }) => ({
 
     [`& .${classes.mainContent}`]: {
         padding: '16px !important'
+    },
+
+    [`& .${classes.toolbar}`]: {
+        padding: 5,
+        paddingLeft: 20,
+        paddingRight: 20,
+        minHeight: 58
     }
 }));
 
@@ -82,8 +96,8 @@ const StyledMainCard = styled(MainCard)((_) => ({
 const sections = [
     {
         id: 'cohorts summary',
-        header: 'Cohorts Summary',
-        component: <AuthorizationSections title="Cohorts Summary" />
+        header: undefined,
+        component: <AuthorizationSections title="All Cohorts" />
     },
     {
         id: 'counts',
@@ -97,7 +111,7 @@ const sections = [
     },
     {
         id: 'authorized cohorts',
-        header: 'Authorized Cohorts',
+        header: undefined,
         component: <AuthorizationSections title="Authorized Cohorts" />
     },
     {
@@ -129,30 +143,34 @@ function ClinicalGenomicSearch() {
             {/* Top bar */}
             <AppBar
                 component="nav"
-                className={`${classes.stickytop} ${classes.headerSpacing} ${
-                    sidebarOpened ? classes.sidebarOffset : classes.noSidebarOffset
-                }`}
+                className={`${classes.stickytop} ${classes.headerSize} ${sidebarOpened ? classes.sidebarOffset : classes.noSidebarOffset}`}
             >
-                <Toolbar sx={{ padding: '5px' }}>
+                <Toolbar className={classes.toolbar}>
                     <Typography variant="h4" sx={{ flexGrow: 1 }}>
                         Federated Search
                     </Typography>
-                    {sections.map((section) => (
-                        <Button
-                            onClick={() => {
-                                window.location.href = `#${section.id}`;
-                            }}
-                            sx={{ my: 2, display: 'block' }}
-                            key={section.id}
-                            className={classes.navigationLink}
-                            variant="text"
-                        >
-                            {section.header}
-                        </Button>
-                    ))}
+                    {sections
+                        .map((section) =>
+                            section.header !== undefined ? (
+                                <Button
+                                    onClick={() => {
+                                        window.location.href = `#${section.id}`;
+                                    }}
+                                    sx={{ my: 2, display: 'block' }}
+                                    key={section.id}
+                                    className={classes.navigationLink}
+                                    variant="text"
+                                >
+                                    {section.header}
+                                </Button>
+                            ) : undefined
+                        )
+                        .filter((obj) => obj !== undefined)}
                 </Toolbar>
+                <SearchExplainer />
             </AppBar>
             {/* Empty div to make sure the header takes up space */}
+            <div className={classes.headerSpacing} />
             <SearchHandler setLoading={setLoading} />
             <MainCard sx={{ minHeight: 830, position: 'relative', borderRadius: customization.borderRadius * 0.25, marginTop: '2.5em' }}>
                 {sections.map((section) => (
