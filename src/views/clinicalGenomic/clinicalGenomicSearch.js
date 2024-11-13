@@ -77,6 +77,8 @@ const Root = styled('div')(({ _ }) => ({
 
     [`& .${classes.toolbar}`]: {
         padding: 5,
+        paddingLeft: 20,
+        paddingRight: 20,
         minHeight: 58
     }
 }));
