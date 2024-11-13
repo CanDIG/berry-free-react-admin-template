@@ -430,7 +430,6 @@ function Sidebar() {
 
     // Certain webpage components can cause the sidebar to clear a particular entry (e.g. the search explanation)
     useEffect(() => {
-        console.log(readerContext.clear);
         if (readerContext.clear === 'nodes') {
             setSelectedNodes({});
             writerContext((old) => ({

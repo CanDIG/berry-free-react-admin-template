@@ -34,11 +34,20 @@ function SearchExplainer() {
     if (query !== undefined) {
         Object.keys(query).forEach((key) => {
             if (key !== undefined && query[key] !== undefined) {
+                const onDelete = () => {
+                    writer((old) => ({ ...old, clear: key }));
+                };
                 const splitQuery = query[key].split('|');
                 const newVal = splitQuery.flatMap((value) => [<b key={value}> OR </b>, value]).slice(1);
                 const formattedKey = key.replaceAll('_', ' ');
-                newVal.splice(0, 0, <span className={`${PREFIX}-chiptext`}>{formattedKey}: </span>);
-                queryChips.push([key, newVal]);
+                newVal.splice(
+                    0,
+                    0,
+                    <span className={`${PREFIX}-chiptext`} key={`${key} span`}>
+                        {formattedKey}:{' '}
+                    </span>
+                );
+                queryChips.push([key, newVal, onDelete]);
             }
         });
     }
@@ -48,30 +57,28 @@ function SearchExplainer() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [reader.reqNum]);
 
+    if (queryChips.length === 0) {
+        queryChips.push(['all', 'All results', undefined]);
+    }
+
     return useMemo(
         () => (
             <Root>
-                {/* Header */}
                 <Box className={`${PREFIX}-background`}>
-                    {queryChips.length > 0 ? (
-                        queryChips
-                            .flatMap((chip) => [
-                                <b key={`${chip[0]}b`}> AND </b>,
-                                <Chip
-                                    key={`${chip[0]}a`}
-                                    label={chip[1]}
-                                    onDelete={() => {
-                                        writer((old) => ({ ...old, clear: chip[0] }));
-                                    }}
-                                    variant="outlined"
-                                    color="primary"
-                                    className={`${PREFIX}-chip`}
-                                />
-                            ])
-                            .slice(1)
-                    ) : (
-                        <Chip key="all" label="All results" variant="outlined" color="primary" className={`${PREFIX}-chip`} />
-                    )}
+                    {queryChips
+                        /* NB: FlatMap+slice(1) to insert ANDs between entries */
+                        .flatMap((chip) => [
+                            <b key={`${chip[0]} and`}> AND </b>,
+                            <Chip
+                                key={`${chip[0]} chip`}
+                                label={chip[1]}
+                                onDelete={chip[2]}
+                                variant="outlined"
+                                color="primary"
+                                className={`${PREFIX}-chip`}
+                            />
+                        ])
+                        .slice(1)}
                 </Box>
             </Root>
         ),
