@@ -452,14 +452,8 @@ function Sidebar() {
                 },
                 reqNum: old.reqNum + 1
             }));
-        } else if (readerContext.clear === 'gene') {
+        } else if (readerContext.clear === 'gene' || readerContext.clear === 'chrom' || readerContext.clear === 'assembly') {
             setSelectedGenes('');
-            writerContext((old) => {
-                const retVal = { ...old, reqNum: old.reqNum + 1 };
-                delete retVal.query.gene;
-                return retVal;
-            });
-        } else if (readerContext.clear === 'chr') {
             setSelectedChromosomes('');
             setStartPos('0');
             setEndPos('0');
