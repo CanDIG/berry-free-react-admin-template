@@ -16,29 +16,6 @@ export function fetchOrRelogin(...args) {
     });
 }
 
-// API Calls
-/* 
-Fetch katsu calls
-*/
-export function fetchKatsu(URL) {
-    // This code is no longer used, however we have decided to archive the HTSGetBrowser class
-    // which depends on this. Therefore, this is kept for posterity
-    /*
-    return fetch(`${katsu}/moh/v1/discovery/overview/${URL}`)
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            console.log(`Katsu: ${response}`);
-            throw new Error(`Katsu: ${response}`);
-        })
-        .catch((error) => {
-            console.log(`Error: ${error}`);
-            return 'error';
-        });
-    */
-}
-
 export function fetchFederationStat(endpoint) {
     return fetchOrRelogin(`${federation}/fanout`, {
         method: 'post',
