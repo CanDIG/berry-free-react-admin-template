@@ -87,6 +87,11 @@ const StyledMainCard = styled(MainCard)((_) => ({
 
 const sections = [
     {
+        id: 'cohorts summary',
+        header: undefined,
+        component: <AuthorizationSections title="All Cohorts" />
+    },
+    {
         id: 'counts',
         header: 'Patient Counts',
         component: <PatientCounts />
@@ -95,6 +100,11 @@ const sections = [
         id: 'visualization',
         header: 'Data Visualization',
         component: <DataVisualization />
+    },
+    {
+        id: 'authorized cohorts',
+        header: undefined,
+        component: <AuthorizationSections title="Authorized Cohorts" />
     },
     {
         id: 'clinical',
@@ -131,19 +141,23 @@ function ClinicalGenomicSearch() {
                     <Typography variant="h4" sx={{ flexGrow: 1 }}>
                         Federated Search
                     </Typography>
-                    {sections.map((section) => (
-                        <Button
-                            onClick={() => {
-                                window.location.href = `#${section.id}`;
-                            }}
-                            sx={{ my: 2, display: 'block' }}
-                            key={section.id}
-                            className={classes.navigationLink}
-                            variant="text"
-                        >
-                            {section.header}
-                        </Button>
-                    ))}
+                    {sections
+                        .map((section) =>
+                            section.header !== undefined ? (
+                                <Button
+                                    onClick={() => {
+                                        window.location.href = `#${section.id}`;
+                                    }}
+                                    sx={{ my: 2, display: 'block' }}
+                                    key={section.id}
+                                    className={classes.navigationLink}
+                                    variant="text"
+                                >
+                                    {section.header}
+                                </Button>
+                            ) : undefined
+                        )
+                        .filter((obj) => obj !== undefined)}
                 </Toolbar>
                 <br />
                 <SearchExplainer />
