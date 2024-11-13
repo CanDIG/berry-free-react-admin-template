@@ -6,21 +6,22 @@ import { useSearchQueryReaderContext, useSearchResultsWriterContext } from '../S
 const PREFIX = 'SearchExplainer';
 
 const Root = styled('div')(({ theme }) => ({
-    marginLeft: '0.5em',
-    marginRight: '0.5em',
     [`& .${PREFIX}-chiptext`]: {
         textTransform: 'capitalize'
     },
     [`& .${PREFIX}-background`]: {
-        padding: '0.5em',
         backgroundColor: theme.palette.primary.light,
-        color: 'black',
-        borderRadius: '10px'
+        color: 'black'
     },
     [`& .${PREFIX}-chip`]: {
         backgroundColor: 'white',
-        marginRight: '5px',
-        marginLeft: '5px'
+        marginRight: 5,
+        marginLeft: 5,
+        marginTop: 20
+    },
+    [`& .${PREFIX}-bold`]: {
+        position: 'relative',
+        top: 10
     }
 }));
 
@@ -68,7 +69,9 @@ function SearchExplainer() {
                     {queryChips
                         /* NB: FlatMap+slice(1) to insert ANDs between entries */
                         .flatMap((chip) => [
-                            <b key={`${chip[0]} and`}> AND </b>,
+                            <span className={`${PREFIX}-bold`} key={`${chip[0]} and`}>
+                                <b>&nbsp;AND&nbsp;</b>
+                            </span>,
                             <Chip
                                 key={`${chip[0]} chip`}
                                 label={chip[1]}

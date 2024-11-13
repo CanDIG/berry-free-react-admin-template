@@ -51,11 +51,11 @@ const Root = styled('div')(({ _ }) => ({
     },
 
     [`& .${classes.headerSize}`]: {
-        height: 140
+        height: 110
     },
 
     [`& .${classes.headerSpacing}`]: {
-        height: 100
+        height: 70
     },
 
     [`& .${classes.anchor}`]: {
