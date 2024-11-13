@@ -4,6 +4,18 @@ export const federation = `${process.env.REACT_APP_FEDERATION_API_SERVER}/v1`;
 export const htsget = process.env.REACT_APP_HTSGET_SERVER;
 export const INGEST_URL = process.env.REACT_APP_INGEST_SERVER;
 
+export function fetchOrRelogin(...args) {
+    return fetch(...args).catch((error) => {
+        if (error.status === 403) {
+            // The user's token has expired, and they need to refresh the page
+            window.location.replace('/auth/logout');
+        } else {
+            // Wasn't a permission denied -- re-throw the error
+            throw error;
+        }
+    });
+}
+
 // API Calls
 /* 
 Fetch katsu calls
@@ -28,7 +40,7 @@ export function fetchKatsu(URL) {
 }
 
 export function fetchFederationStat(endpoint) {
-    return fetch(`${federation}/fanout`, {
+    return fetchOrRelogin(`${federation}/fanout`, {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -54,7 +66,7 @@ export function fetchFederationStat(endpoint) {
 Generic querying for federation
 */
 export function fetchFederation(path, service) {
-    return fetch(`${federation}/fanout`, {
+    return fetchOrRelogin(`${federation}/fanout`, {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -88,7 +100,7 @@ export function query(parameters, abort, path = 'query') {
         ...parameters
     };
 
-    return fetch(`${federation}/fanout`, {
+    return fetchOrRelogin(`${federation}/fanout`, {
         method: 'post',
         signal: abort,
         headers: { 'Content-Type': 'application/json' },
@@ -124,7 +136,7 @@ which at this time is unimplemented.
 Post a clinical data JSON to Katsu
 */
 export function ingestClinicalData(data) {
-    return fetch(`${INGEST_URL}/ingest/clinical_donors`, {
+    return fetchOrRelogin(`${INGEST_URL}/ingest/clinical_donors`, {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: data
@@ -139,7 +151,7 @@ export function ingestClinicalData(data) {
 Post a clinical data JSON to Katsu
 */
 export function ingestGenomicData(data, program_id) {
-    return fetch(`${INGEST_URL}/ingest/moh_variants/${program_id}`, {
+    return fetchOrRelogin(`${INGEST_URL}/ingest/moh_variants/${program_id}`, {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: data
@@ -216,7 +228,7 @@ export function fetchClinicalCompleteness() {
  * Directly query Query for the /get-tokene endpoint, which reflects our refresh token.
  */
 export function fetchRefreshToken() {
-    return fetch(`${INGEST_URL}/get-token`)
+    return fetchOrRelogin(`${INGEST_URL}/get-token`)
         .then((response) => response.json())
         .catch((error) => {
             console.log('Error:', error);
