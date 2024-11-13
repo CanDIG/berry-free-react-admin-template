@@ -14,7 +14,8 @@ const Root = styled('div')(({ theme }) => ({
     [`& .${PREFIX}-background`]: {
         padding: '0.5em',
         backgroundColor: theme.palette.primary.light,
-        color: 'black'
+        color: 'black',
+        borderRadius: '10px'
     },
     [`& .${PREFIX}-chip`]: {
         backgroundColor: 'white',

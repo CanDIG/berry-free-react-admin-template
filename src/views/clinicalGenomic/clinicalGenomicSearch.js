@@ -26,8 +26,7 @@ const classes = {
     headerSize: `${PREFIX}-headerSize`,
     anchor: `${PREFIX}-anchor`,
     navigationLink: `${PREFIX}-navigationLink`,
-    mainContent: `${PREFIX}-mainContent`,
-    test: `${PREFIX}-test`
+    mainContent: `${PREFIX}-mainContent`
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
@@ -42,13 +41,13 @@ const Root = styled('div')(({ _ }) => ({
     },
 
     [`& .${classes.sidebarOffset}`]: {
-        width: 'calc(100% - 320px)',
+        width: 'calc(100% - 300px)',
         left: 280
     },
 
     [`& .${classes.noSidebarOffset}`]: {
-        width: 'calc(100% - 80px)',
-        left: 40
+        width: 'calc(100% - 35px)',
+        left: 18
     },
 
     [`& .${classes.headerSize}`]: {
@@ -73,11 +72,6 @@ const Root = styled('div')(({ _ }) => ({
 
     [`& .${classes.mainContent}`]: {
         padding: '16px !important'
-    },
-
-    [`& .${classes.test}`]: {
-        position: 'relative',
-        display: 'flex'
     }
 }));
 
