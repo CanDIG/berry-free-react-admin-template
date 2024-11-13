@@ -26,7 +26,8 @@ const classes = {
     headerSize: `${PREFIX}-headerSize`,
     anchor: `${PREFIX}-anchor`,
     navigationLink: `${PREFIX}-navigationLink`,
-    mainContent: `${PREFIX}-mainContent`
+    mainContent: `${PREFIX}-mainContent`,
+    toolbar: `${PREFIX}-toolbar`
 };
 
 // TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
@@ -72,6 +73,11 @@ const Root = styled('div')(({ _ }) => ({
 
     [`& .${classes.mainContent}`]: {
         padding: '16px !important'
+    },
+
+    [`& .${classes.toolbar}`]: {
+        padding: 5,
+        minHeight: 58
     }
 }));
 
@@ -137,7 +143,7 @@ function ClinicalGenomicSearch() {
                 component="nav"
                 className={`${classes.stickytop} ${classes.headerSize} ${sidebarOpened ? classes.sidebarOffset : classes.noSidebarOffset}`}
             >
-                <Toolbar sx={{ padding: '5px' }}>
+                <Toolbar className={classes.toolbar}>
                     <Typography variant="h4" sx={{ flexGrow: 1 }}>
                         Federated Search
                     </Typography>
@@ -159,7 +165,6 @@ function ClinicalGenomicSearch() {
                         )
                         .filter((obj) => obj !== undefined)}
                 </Toolbar>
-                <br />
                 <SearchExplainer />
             </AppBar>
             {/* Empty div to make sure the header takes up space */}
