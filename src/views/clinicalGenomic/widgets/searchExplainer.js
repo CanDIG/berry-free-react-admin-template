@@ -13,10 +13,13 @@ const Root = styled('div')(({ theme }) => ({
     },
     [`& .${PREFIX}-background`]: {
         padding: '0.5em',
-        backgroundColor: theme.palette.primary.light
+        backgroundColor: theme.palette.primary.light,
+        color: 'black'
     },
     [`& .${PREFIX}-chip`]: {
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        marginRight: '5px',
+        marginLeft: '5px'
     }
 }));
 
@@ -52,9 +55,9 @@ function SearchExplainer() {
                     {queryChips.length > 0 ? (
                         queryChips
                             .flatMap((chip) => [
-                                <b key={`${chip}b`}> AND </b>,
+                                <b key={`${chip[0]}b`}> AND </b>,
                                 <Chip
-                                    key={chip[0]}
+                                    key={`${chip[0]}a`}
                                     label={chip[1]}
                                     onDelete={() => {
                                         writer((old) => ({ ...old, clear: chip[0] }));
@@ -66,7 +69,7 @@ function SearchExplainer() {
                             ])
                             .slice(1)
                     ) : (
-                        <Chip label="All results" variant="outlined" color="primary" className={`${PREFIX}-chip`} />
+                        <Chip key="all" label="All results" variant="outlined" color="primary" className={`${PREFIX}-chip`} />
                     )}
                 </Box>
             </Root>

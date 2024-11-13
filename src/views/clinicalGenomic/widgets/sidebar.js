@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import {
+    Chip,
     Checkbox,
     FormControl,
     FormControlLabel,
@@ -205,6 +206,9 @@ function StyledCheckboxList(props) {
                 </li>
             )}
             renderInput={(params) => <TextField {...params} label={groupName} />}
+            renderTags={(tagValue, getTagProps) =>
+                tagValue.map((option, index) => <Chip {...getTagProps({ index })} key={option} label={option} />)
+            }
             // set width to match parent
             sx={{ width: '100%', paddingTop: '0.5em', paddingBottom: '0.5em' }}
             onChange={(_, value, reason) => {

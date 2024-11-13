@@ -23,6 +23,7 @@ const classes = {
     sidebarOffset: `${PREFIX}-sidebarOffset`,
     noSidebarOffset: `${PREFIX}-noSidebarOffset`,
     headerSpacing: `${PREFIX}-headerSpacing`,
+    headerSize: `${PREFIX}-headerSize`,
     anchor: `${PREFIX}-anchor`,
     navigationLink: `${PREFIX}-navigationLink`,
     mainContent: `${PREFIX}-mainContent`,
@@ -50,15 +51,19 @@ const Root = styled('div')(({ _ }) => ({
         left: 40
     },
 
-    [`& .${classes.headerSpacing}`]: {
+    [`& .${classes.headerSize}`]: {
         height: 140
+    },
+
+    [`& .${classes.headerSpacing}`]: {
+        height: 100
     },
 
     [`& .${classes.anchor}`]: {
         display: 'block',
         position: 'relative',
         visibility: 'hidden',
-        top: -150
+        top: -250
     },
 
     [`& .${classes.navigationLink}`]: {
@@ -87,16 +92,6 @@ const StyledMainCard = styled(MainCard)((_) => ({
 }));
 
 const sections = [
-    /* {
-        id: 'search explainer',
-        header: 'Search Terms',
-        component: <SearchExplainer />
-    }, */
-    {
-        id: 'cohorts summary',
-        header: 'Cohorts Summary',
-        component: <AuthorizationSections title="Cohorts Summary" />
-    },
     {
         id: 'counts',
         header: 'Patient Counts',
@@ -106,11 +101,6 @@ const sections = [
         id: 'visualization',
         header: 'Data Visualization',
         component: <DataVisualization />
-    },
-    {
-        id: 'authorized cohorts',
-        header: 'Authorized Cohorts',
-        component: <AuthorizationSections title="Authorized Cohorts" />
     },
     {
         id: 'clinical',
@@ -141,9 +131,7 @@ function ClinicalGenomicSearch() {
             {/* Top bar */}
             <AppBar
                 component="nav"
-                className={`${classes.stickytop} ${classes.headerSpacing} ${
-                    sidebarOpened ? classes.sidebarOffset : classes.noSidebarOffset
-                }`}
+                className={`${classes.stickytop} ${classes.headerSize} ${sidebarOpened ? classes.sidebarOffset : classes.noSidebarOffset}`}
             >
                 <Toolbar sx={{ padding: '5px' }}>
                     <Typography variant="h4" sx={{ flexGrow: 1 }}>
@@ -167,6 +155,7 @@ function ClinicalGenomicSearch() {
                 <SearchExplainer />
             </AppBar>
             {/* Empty div to make sure the header takes up space */}
+            <div className={classes.headerSpacing} />
             <SearchHandler setLoading={setLoading} />
             <MainCard sx={{ minHeight: 830, position: 'relative', borderRadius: customization.borderRadius * 0.25, marginTop: '2.5em' }}>
                 {sections.map((section) => (
