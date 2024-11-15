@@ -561,7 +561,7 @@ function Sidebar() {
             </Tabs>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Button className={classes.button} onClick={() => resetButton()}>
-                    Reset Filters
+                    Reset
                 </Button>
                 <Button className={classes.button} onClick={triggerSearch}>
                     Search
