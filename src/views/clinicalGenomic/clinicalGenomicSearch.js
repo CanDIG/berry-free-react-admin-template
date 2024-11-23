@@ -95,9 +95,9 @@ const StyledMainCard = styled(MainCard)((_) => ({
 
 const sections = [
     {
-        id: 'cohorts summary',
+        id: 'Programs summary',
         header: undefined,
-        component: <AuthorizationSections title="All Cohorts" />
+        component: <AuthorizationSections title="All Programs" />
     },
     {
         id: 'counts',
@@ -110,9 +110,9 @@ const sections = [
         component: <DataVisualization />
     },
     {
-        id: 'authorized cohorts',
+        id: 'authorized programs',
         header: undefined,
-        component: <AuthorizationSections title="Authorized Cohorts" />
+        component: <AuthorizationSections title="Authorized Programs" />
     },
     {
         id: 'clinical',

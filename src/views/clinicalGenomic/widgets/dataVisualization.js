@@ -75,7 +75,7 @@ function DataVisualization() {
     };
 
     const dataVis = {
-        patients_per_cohort: handleCensoring('patients_per_cohort', (site, _) => site, true) || {},
+        patients_per_program: handleCensoring('patients_per_program', (site, _) => site, true) || {},
         diagnosis_age_count: handleCensoring('age_at_diagnosis', (_, age) => age.replace(/ Years$/, '')) || {},
         treatment_type_count: handleCensoring('treatment_type_count') || {},
         primary_site_count: handleCensoring('primary_site_count') || {}
@@ -93,7 +93,7 @@ function DataVisualization() {
     const [dataValue, setDataValue] = useState(
         localStorage.getItem('dataVisData') && JSON.parse(localStorage.getItem('dataVisData'))?.[0]
             ? JSON.parse(localStorage.getItem('dataVisData'))[0]
-            : 'patients_per_cohort'
+            : 'patients_per_program'
     );
     const [chartType, setChartType] = useState(
         localStorage.getItem('dataVisChartType') && JSON.parse(localStorage.getItem('dataVisChartType'))?.[0]

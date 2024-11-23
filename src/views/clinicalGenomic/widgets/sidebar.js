@@ -121,7 +121,8 @@ SidebarGroup.propTypes = {
 };
 
 function StyledCheckboxList(props) {
-    const { isExclusion, groupName, isFilterList, onWrite, options, authorizedCohorts, useAutoComplete, hide, checked, setChecked } = props;
+    const { isExclusion, groupName, isFilterList, onWrite, options, authorizedPrograms, useAutoComplete, hide, checked, setChecked } =
+        props;
 
     if (hide) {
         return null;
@@ -222,8 +223,8 @@ function StyledCheckboxList(props) {
                 label={
                     <div className={classes.lockContainer}>
                         {option}
-                        {groupName === 'exclude_cohorts' && authorizedCohorts && !authorizedCohorts.includes(option) && (
-                            <Tooltip title="Unauthorized Cohort" placement="right">
+                        {groupName === 'exclude_programs' && authorizedPrograms && !authorizedPrograms.includes(option) && (
+                            <Tooltip title="Unauthorized Program" placement="right">
                                 <LockOutlinedIcon className={classes.lockIcon} />
                             </Tooltip>
                         )}
@@ -259,7 +260,7 @@ function StyledCheckboxList(props) {
 StyledCheckboxList.propTypes = {
     isExclusion: PropTypes.bool,
     groupName: PropTypes.string,
-    authorizedCohorts: PropTypes.array,
+    authorizedPrograms: PropTypes.array,
     hide: PropTypes.bool,
     isDonorList: PropTypes.bool,
     isFilterList: PropTypes.bool,
@@ -418,7 +419,7 @@ function Sidebar() {
 
     // Clinical Data
     const [selectedNodes, setSelectedNodes] = useState({});
-    const [selectedCohorts, setSelectedCohorts] = useState({});
+    const [selectedPrograms, setSelectedPrograms] = useState({});
     const [selectedTreatment, setSelectedTreatment] = useState({});
     const [selectedPrimarySite, setSelectedPrimarySite] = useState({});
     const [selectedSystemicTherapy, setSelectedSystemicTherapy] = useState({});
@@ -440,14 +441,14 @@ function Sidebar() {
                 },
                 reqNum: old.reqNum + 1
             }));
-        } else if (readerContext.clear === 'cohorts') {
-            setSelectedCohorts({});
+        } else if (readerContext.clear === 'programs') {
+            setSelectedPrograms({});
             writerContext((old) => ({
                 ...old,
                 filter: {
                     ...old.filter,
-                    exclude_cohorts: [
-                        readerContext?.programs?.map((loc) => loc?.results?.items?.map((cohort) => cohort.program_id)).flat(1) || []
+                    exclude_programs: [
+                        readerContext?.programs?.map((loc) => loc?.results?.items?.map((program) => program.program_id)).flat(1) || []
                     ]
                 },
                 reqNum: old.reqNum + 1
@@ -496,7 +497,7 @@ function Sidebar() {
     function resetButton() {
         // Reset state variables for checkboxes and dropdowns
         setSelectedNodes({});
-        setSelectedCohorts({});
+        setSelectedPrograms({});
 
         // Genomic
         setSelectedGenes('');
@@ -509,14 +510,14 @@ function Sidebar() {
         setSelectedPrimarySite({});
         setSelectedSystemicTherapy({});
 
-        // Set context writer to include only nodes and cohorts
+        // Set context writer to include only nodes and programs
         writerContext({
-            // Set nodes and cohorts in the filter
+            // Set nodes and programs in the filter
             filter: {
                 node: [readerContext?.programs?.map((loc) => loc.location.name) || []], // Set your default nodes
-                exclude_cohorts: [
-                    readerContext?.programs?.map((loc) => loc?.results?.items?.map((cohort) => cohort.program_id)).flat(1) || []
-                ], // Set cohorts to empty array or whichever default value you want
+                exclude_programs: [
+                    readerContext?.programs?.map((loc) => loc?.results?.items?.map((program) => program.program_id)).flat(1) || []
+                ], // Set programs to empty array or whichever default value you want
                 query: {}
             }
         });
@@ -533,8 +534,8 @@ function Sidebar() {
 
     // Parse out what we need:
     const sites = readerContext?.programs?.map((loc) => loc.location.name) || [];
-    const cohorts = readerContext?.federation?.map((loc) => loc.results?.map((cohort) => cohort.program_id) || [])?.flat(1) || [];
-    const authorizedCohorts = readerContext?.programs?.flatMap((loc) => loc?.results?.items?.map((cohort) => cohort.program_id)) || [];
+    const programs = readerContext?.federation?.map((loc) => loc.results?.map((program) => program.program_id) || [])?.flat(1) || [];
+    const authorizedPrograms = readerContext?.programs?.flatMap((loc) => loc?.results?.items?.map((program) => program.program_id)) || [];
     const treatmentTypes = ExtractSidebarElements('treatment_types');
     const tumourPrimarySites = ExtractSidebarElements('tumour_primary_sites');
     const systemicTherapyDrugNames = ExtractSidebarElements('drug_names');
@@ -578,15 +579,15 @@ function Sidebar() {
                     setChecked={setSelectedNodes}
                 />
             </SidebarGroup>
-            <SidebarGroup name="Cohort">
+            <SidebarGroup name="Program">
                 <StyledCheckboxList
-                    options={cohorts}
-                    authorizedCohorts={authorizedCohorts}
+                    options={programs}
+                    authorizedPrograms={authorizedPrograms}
                     onWrite={writerContext}
-                    groupName="exclude_cohorts"
+                    groupName="exclude_programs"
                     isExclusion
-                    checked={selectedCohorts}
-                    setChecked={setSelectedCohorts}
+                    checked={selectedPrograms}
+                    setChecked={setSelectedPrograms}
                 />
             </SidebarGroup>
             <GenomicsGroup
