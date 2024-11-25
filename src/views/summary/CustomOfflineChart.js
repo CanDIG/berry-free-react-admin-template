@@ -113,7 +113,7 @@ function CustomOfflineChart({
                     // datum is either going to be one of three things:
                     // 1. an array of objects
                     // 2. an object which whose keys are indexes and whose values are objects with <var>_count and <var>_name
-                    // 3. an object whose keys are cohorts and whose values are numbers
+                    // 3. an object whose keys are programs and whose values are numbers
                     // (Why the return value is formatted this way I have no idea)
 
                     // Case 1: an array of objects
@@ -127,7 +127,7 @@ function CustomOfflineChart({
                             return isObjectCensored(datum);
                         }
 
-                        // Case 3: an object whose keys are cohorts and whose values are numbers
+                        // Case 3: an object whose keys are programs and whose values are numbers
                         return Object.values(datum).some((val) => typeof val === 'string' && val.startsWith('<'));
                     }
 
@@ -184,11 +184,11 @@ function CustomOfflineChart({
 
                 Object.keys(thisData).forEach((key, i) => {
                     categories.push(key);
-                    Object.keys(thisData[key]).forEach((cohort) => {
-                        if (!data.has(cohort)) {
-                            data.set(cohort, new Array(Object.keys(thisData).length).fill(0));
+                    Object.keys(thisData[key]).forEach((program) => {
+                        if (!data.has(program)) {
+                            data.set(program, new Array(Object.keys(thisData).length).fill(0));
                         }
-                        data.get(cohort).splice(i, 1, thisData[key][cohort]);
+                        data.get(program).splice(i, 1, thisData[key][program]);
                     });
 
                     // Order & truncate the categories by the data

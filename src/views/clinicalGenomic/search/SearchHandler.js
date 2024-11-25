@@ -26,7 +26,7 @@ function SearchHandler({ setLoading }) {
                 .then((data) => {
                     writer((old) => ({ ...old, sidebar: data }));
                 })
-                .then(() => fetchFederationStat('/patients_per_cohort'))
+                .then(() => fetchFederationStat('/patients_per_program'))
                 .then((data) => {
                     writer((old) => ({ ...old, federation: data }));
                 })
@@ -88,10 +88,10 @@ function SearchHandler({ setLoading }) {
                         age_at_diagnosis: CollateSummary(data, 'age_at_diagnosis'),
                         treatment_type_count: CollateSummary(data, 'treatment_type_count'),
                         primary_site_count: CollateSummary(data, 'primary_site_count'),
-                        patients_per_cohort: {}
+                        patients_per_program: {}
                     };
                     data.forEach((site) => {
-                        discoveryCounts.patients_per_cohort[site.location.name] = site.results?.patients_per_cohort;
+                        discoveryCounts.patients_per_program[site.location.name] = site.results?.patients_per_program;
                     });
 
                     writer((old) => ({ ...old, counts: discoveryCounts }));
@@ -124,7 +124,7 @@ function SearchHandler({ setLoading }) {
                     if (reader.filter?.node) {
                         data = data.filter((site) => !reader.filter.node.includes(site.location.name));
                     }
-                    // Reorder the data, and fill out the patients per cohort
+                    // Reorder the data, and fill out the patients per program
                     const clinicalData = {};
                     data.forEach((site) => {
                         if ('results' in site) {
@@ -162,12 +162,12 @@ function SearchHandler({ setLoading }) {
 
     // Query 3: when the selected donor changes, re-query the server
     useEffect(() => {
-        if (!reader.donorID || !reader.cohort) {
+        if (!reader.donorID || !reader.program) {
             return;
         }
         setLoading(true);
 
-        const url = `v3/authorized/donor_with_clinical_data/program/${reader.cohort}/donor/${reader.donorID}`;
+        const url = `v3/authorized/donor_with_clinical_data/program/${reader.program}/donor/${reader.donorID}`;
         trackPromise(
             fetchFederation(url, 'katsu')
                 .then((data) => {
