@@ -202,7 +202,7 @@ export function fetchClinicalCompleteness() {
 }
 
 /*
- * Directly query Query for the /get-tokene endpoint, which reflects our refresh token.
+ * Directly query Query for the /get-token endpoint, which reflects our refresh token.
  */
 export function fetchRefreshToken() {
     return fetchOrRelogin(`${INGEST_URL}/get-token`)
