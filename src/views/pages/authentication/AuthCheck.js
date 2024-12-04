@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
-import { MutatingDots } from 'react-loader-spinner';
-
-// mui
-import { IconShieldLock } from '@tabler/icons-react';
+import PropTypes from 'prop-types';
 
 // project imports
-import MainCard from 'ui-component/cards/MainCard';
 import { INGEST_URL } from 'store/api';
+import { UseUnauthorizedRoutes } from 'routes/UnauthorizedRoutes';
+import { AuthContext } from './AuthContext';
 
 // assets
 
 function AuthCheck(props) {
     const { children } = props;
-    const [isLoading, setIsLoading] = useState(true);
-    const [authorized, setAuthorized] = useState(false);
+    const [authCheckState, setAuthCheckState] = useState({
+        loading: true,
+        authorized: false
+    });
 
     // Fire off the authorization check
     useEffect(() => {
-        fetch(`${INGEST_URL}/programs`)
+        fetch(`${INGEST_URL}/user/self_authorize`)
             .then((request) => {
                 if (request.ok) {
                     return request.json();
@@ -25,30 +25,33 @@ function AuthCheck(props) {
                 throw new Error(`${request.status}: ${request.statusText}`);
             })
             .then((_) => {
-                setAuthorized(true);
+                setAuthCheckState((old) => {
+                    const retVal = { ...old };
+                    retVal.authorized = true;
+                    return retVal;
+                });
+            })
+            .catch((error) => {
+                console.log(error);
             })
             .finally(() => {
-                setIsLoading(false);
+                setAuthCheckState((old) => {
+                    const retVal = { ...old };
+                    retVal.loading = false;
+                    return retVal;
+                });
             });
     }, []);
 
-    if (isLoading) {
-        return (
-            <MainCard>
-                <MutatingDots color="#2BAD60" secondaryColor="#037DB5" height="100" width="110" />
-            </MainCard>
-        );
-    }
-
-    if (authorized) {
-        return children;
-    }
-
     return (
-        <MainCard>
-            <IconShieldLock />
-        </MainCard>
+        <AuthContext.Provider value={authCheckState}>
+            {authCheckState.authorized ? children : <UseUnauthorizedRoutes />}
+        </AuthContext.Provider>
     );
 }
+
+AuthCheck.propTypes = {
+    children: PropTypes.node
+};
 
 export default AuthCheck;

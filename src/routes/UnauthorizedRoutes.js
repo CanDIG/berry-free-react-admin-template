@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { useRoutes } from 'react-router-dom';
 
 // project imports
 import MainLayout from 'layout/MainLayout';
@@ -11,10 +12,7 @@ import config from 'config';
 const { basename } = config;
 
 // Unauthorized page
-const AuthCheck = Loadable(lazy(() => import('views/pages/authentication/AuthCheck')));
-
-// Error Pages
-const ErrorNotFoundPage = Loadable(lazy(() => import('views/errorPages/ErrorNotFoundPage')));
+const AuthDisplay = Loadable(lazy(() => import('views/pages/authentication/AuthDisplay')));
 
 // ===========================|| MAIN ROUTING ||=========================== //
 
@@ -24,17 +22,21 @@ const UnauthorizedRoutes = {
     children: [
         {
             path: `/`,
-            element: <AuthCheck />
+            element: <AuthDisplay />
         },
         {
             path: `${basename}/unauthorized`,
-            element: <AuthCheck />
+            element: <AuthDisplay />
         },
         {
             path: '*',
-            element: <AuthCheck />
+            element: <AuthDisplay />
         }
     ]
 };
 
 export default UnauthorizedRoutes;
+
+export function UseUnauthorizedRoutes() {
+    return useRoutes([UnauthorizedRoutes]);
+}
