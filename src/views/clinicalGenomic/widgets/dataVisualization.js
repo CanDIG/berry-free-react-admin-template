@@ -211,7 +211,7 @@ function DataVisualization() {
 
     function returndataVisData() {
         const data = dataVisData.map((item, index) => (
-            <Grid item xs={12} sm={12} md={6} lg={3} key={item + index}>
+            <Grid item xs={12} sm={6} md={6} lg={6} xl={3} key={item + index}>
                 <CustomOfflineChart
                     dataObject=""
                     dataVis={dataVis}
