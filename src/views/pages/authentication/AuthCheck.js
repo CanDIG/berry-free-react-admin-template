@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 // project imports
@@ -12,7 +12,9 @@ function AuthCheck(props) {
     const { children } = props;
     const [authCheckState, setAuthCheckState] = useState({
         loading: true,
-        authorized: false
+        authorized: false,
+        pending: true,
+        reqNum: 0
     });
 
     // Fire off the authorization check
@@ -24,10 +26,11 @@ function AuthCheck(props) {
                 }
                 throw new Error(`${request.status}: ${request.statusText}`);
             })
-            .then((_) => {
+            .then((data) => {
                 setAuthCheckState((old) => {
                     const retVal = { ...old };
-                    retVal.authorized = true;
+                    retVal.pending = data.results === 'Pending';
+                    retVal.authorized = Array.isArray(data.results);
                     return retVal;
                 });
             })
@@ -41,12 +44,12 @@ function AuthCheck(props) {
                     return retVal;
                 });
             });
-    }, []);
+    }, [authCheckState.reqNum]);
+
+    const contextValue = useMemo(() => [authCheckState, setAuthCheckState], [authCheckState, setAuthCheckState]);
 
     return (
-        <AuthContext.Provider value={authCheckState}>
-            {authCheckState.authorized ? children : <UseUnauthorizedRoutes />}
-        </AuthContext.Provider>
+        <AuthContext.Provider value={contextValue}>{authCheckState.authorized ? children : <UseUnauthorizedRoutes />}</AuthContext.Provider>
     );
 }
 
