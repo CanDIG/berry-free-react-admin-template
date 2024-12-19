@@ -21,11 +21,14 @@ const classes = {
     mainContainer: `${PREFIX}-maincontainer`,
     iconwrapper: `${PREFIX}-iconwrapper`,
     icon: `${PREFIX}-icon`,
+    yellow: `${PREFIX}-yellow`,
     centered: `${PREFIX}-centered`,
+    header: `${PREFIX}-header`,
+    footer: `${PREFIX}-footer`,
     spacer: `${PREFIX}-spacer`
 };
 
-const Root = styled('div')(({ _ }) => ({
+const Root = styled('div')(({ theme }) => ({
     [`& .${classes.mainContainer}`]: {
         display: 'flex',
         alignItems: 'center',
@@ -33,7 +36,8 @@ const Root = styled('div')(({ _ }) => ({
     },
 
     [`& .${classes.mainCard}`]: {
-        width: '80%'
+        width: '80%',
+        boxShadow: theme.shadows[8]
     },
 
     [`& .${classes.iconwrapper}`]: {
@@ -50,12 +54,26 @@ const Root = styled('div')(({ _ }) => ({
         color: '#7A0C0C'
     },
 
+    [`& .${classes.yellow}`]: {
+        width: 200,
+        height: 200,
+        color: '#F09934'
+    },
+
     [`& .${classes.centered}`]: {
         textAlign: 'center'
     },
 
     [`& .${classes.spacer}`]: {
         height: 50
+    },
+
+    [`& .${classes.header}`]: {
+        height: '8em'
+    },
+
+    [`& .${classes.footer}`]: {
+        height: '8em'
     }
 }));
 
@@ -63,11 +81,13 @@ function AlertCard(props) {
     const { icon, messageArea, button } = props;
     return (
         <div className={classes.centered}>
+            <div className={classes.header} />
             <div className={classes.iconwrapper}>{icon}</div>
             <div className={classes.spacer} />
             {messageArea}
             <div className={classes.spacer} />
             {button}
+            <div className={classes.footer} />
         </div>
     );
 }
@@ -103,7 +123,7 @@ function AuthDisplay() {
     } else if (authStatus.pending) {
         content = (
             <AlertCard
-                icon={<HourglassBottomTwoToneIcon className={classes.icon} />}
+                icon={<HourglassBottomTwoToneIcon className={`${classes.icon} ${classes.yellow}`} />}
                 messageArea={
                     <>
                         <Typography variant="h2">
@@ -113,9 +133,13 @@ function AuthDisplay() {
                     </>
                 }
                 button={
-                    <Button variant="contained" href={`mailto: ${config.supportEmail}`}>
-                        Contact
-                    </Button>
+                    config.supportEmail ? (
+                        <Button variant="contained" href={`mailto: ${config.supportEmail}`}>
+                            Contact
+                        </Button>
+                    ) : (
+                        <>&nbsp;</>
+                    )
                 }
             />
         );
