@@ -13,7 +13,7 @@ function AuthCheck(props) {
     const [authCheckState, setAuthCheckState] = useState({
         loading: true,
         authorized: false,
-        pending: true,
+        pending: false,
         reqNum: 0
     });
 
