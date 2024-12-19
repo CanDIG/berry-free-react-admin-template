@@ -129,7 +129,7 @@ function AuthDisplay() {
                         <Typography variant="h2">
                             You are not authorized to access this site and your authorization request is still pending.
                         </Typography>
-                        <Typography variant="h2">Please contact {config.supportEmail} for details</Typography>
+                        <Typography variant="h2">Please contact {config.supportEmail ?? 'your site admin'} for details</Typography>
                     </>
                 }
                 button={
