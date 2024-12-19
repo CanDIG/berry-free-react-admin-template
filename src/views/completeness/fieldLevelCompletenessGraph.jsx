@@ -130,6 +130,11 @@ function FieldLevelCompletenessGraph(props) {
             enabled: false
         },
         chart: {
+            zooming: {
+                mouseWheel: {
+                    enabled: true
+                }
+            },
             height: '360px; auto',
             type: 'bar',
             plotBackgroundColor: null,
