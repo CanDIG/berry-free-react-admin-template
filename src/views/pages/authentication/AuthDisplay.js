@@ -32,7 +32,8 @@ const Root = styled('div')(({ theme }) => ({
     [`& .${classes.mainContainer}`]: {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        minHeight: 'calc(100vh - 88px)'
     },
 
     [`& .${classes.mainCard}`]: {
