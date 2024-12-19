@@ -19,7 +19,7 @@ function AuthCheck(props) {
 
     // Fire off the authorization check
     useEffect(() => {
-        fetch(`${INGEST_URL}/user/self_authorize`)
+        fetch(`${INGEST_URL}/user/me/authorize`)
             .then((request) => {
                 if (request.ok) {
                     return request.json();
