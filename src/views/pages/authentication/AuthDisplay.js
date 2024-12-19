@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { MutatingDots } from 'react-loader-spinner';
 
 // mui
