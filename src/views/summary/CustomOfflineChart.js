@@ -23,6 +23,9 @@ import config from 'config';
 
 window.Highcharts = Highcharts;
 
+// Used to ensure that we are not parsed an invalid chart type
+export const VALID_CHART_TYPES = [];
+
 /*
  * Component for offline chart
  * @param {string} chartType

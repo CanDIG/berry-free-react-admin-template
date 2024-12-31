@@ -14,12 +14,37 @@ import Button from '@mui/material/Button';
 import { IconEdit, IconX, IconPlus } from '@tabler/icons-react';
 
 // Custom Components and context
-import CustomOfflineChart from 'views/summary/CustomOfflineChart';
+import CustomOfflineChart, { VALID_CHART_TYPES } from 'views/summary/CustomOfflineChart';
 import { useSearchResultsReaderContext } from '../SearchResultsContext';
 
 // Constants
 import { validStackedCharts, DataVisualizationChartInfo } from 'store/constant';
 import { HAS_CENSORED_DATA_MARKER } from 'utils/utils';
+
+const DEFAULT_CHART_DEFINITIONS = [
+    {
+        data: 'patients_per_program',
+        chartType: 'bar',
+        trim: false
+    },
+    {
+        data: 'diagnosis_age_count',
+        chartType: 'bar',
+        trim: false
+    },
+    {
+        data: 'treatment_type_count',
+        chartType: 'bar',
+        trim: false
+    },
+    {
+        data: 'primary_site_count',
+        chartType: 'bar',
+        trim: false
+    }
+];
+
+const LOCAL_VARIABLE_KEY = 'chartDefinitions';
 
 function DataVisualization() {
     // Hooks
@@ -86,37 +111,38 @@ function DataVisualization() {
     const [edit, setEdit] = useState(false);
     const [open, setOpen] = useState(false);
 
-    // Top 4 keys from dataVis
-    const topKeys = Object.keys(dataVis).slice(0, 4);
-
     // LocalStorage
-    const [dataValue, setDataValue] = useState(
-        localStorage.getItem('dataVisData') && JSON.parse(localStorage.getItem('dataVisData'))?.[0]
-            ? JSON.parse(localStorage.getItem('dataVisData'))[0]
-            : 'patients_per_program'
+    const [chartDefinitions, setChartDefinitions] = useState(
+        localStorage.getItem(LOCAL_VARIABLE_KEY) ? JSON.parse(localStorage.getItem(LOCAL_VARIABLE_KEY)) : DEFAULT_CHART_DEFINITIONS
     );
-    const [chartType, setChartType] = useState(
-        localStorage.getItem('dataVisChartType') && JSON.parse(localStorage.getItem('dataVisChartType'))?.[0]
-            ? JSON.parse(localStorage.getItem('dataVisChartType'))[0]
-            : 'bar'
-    );
-    const [dataVisData, setdataVisData] = useState(
-        localStorage.getItem('dataVisData') ? JSON.parse(localStorage.getItem('dataVisData')) : topKeys
-    );
-    const [dataVisChartType, setDataVisChartType] = useState(
-        localStorage.getItem('dataVisChartType') ? JSON.parse(localStorage.getItem('dataVisChartType')) : ['bar', 'bar', 'bar', 'bar']
-    );
-    const [dataVisTrim, setDataVisTrim] = useState(
-        localStorage.getItem('dataVisTrim') ? JSON.parse(localStorage.getItem('dataVisTrim')) : [false, false, false, false]
-    );
+    const [newDataKey, setNewDataKey] = useState('patients_per_program');
+    const [newChartType, setNewChartType] = useState('bar');
+
+    // Validate chart types to remove any that are not supported
+    useEffect(() => {
+        const invalidChartIndexes = [];
+        for (let i = 0; i < chartDefinitions.length; i += 1) {
+            if (!VALID_CHART_TYPES.includes(chartDefinitions[i])) {
+                invalidChartIndexes.push(i);
+            }
+        }
+
+        if (invalidChartIndexes.length > 0) {
+            setChartDefinitions((old) => {
+                const newChartDefinitions = old.slice();
+                invalidChartIndexes.forEach((index, numRemoved) => {
+                    newChartDefinitions.slice(index - numRemoved);
+                });
+                localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
+                return newChartDefinitions;
+            });
+        }
+    }, [JSON.stringify(chartDefinitions)]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Intial localStorage setting if there are none
     useEffect(() => {
-        if (!localStorage.getItem('dataVisData') && !localStorage.getItem('dataVisChartType')) {
-            const charts = topKeys.map(() => 'bar');
-            localStorage.setItem('dataVisChartType', JSON.stringify(charts), { expires: 365 });
-            localStorage.setItem('dataVisData', JSON.stringify(topKeys), { expires: 365 });
-            localStorage.setItem('dataVisTrim', JSON.stringify([false, false, false, false]), { expires: 365 });
+        if (!localStorage.getItem('LOCAL_VARIABLE_KEY')) {
+            localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(chartDefinitions), { expires: 365 });
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -124,43 +150,33 @@ function DataVisualization() {
         setOpen((prevOpen) => !prevOpen);
     };
 
-    function setDataVisChartTypeSingle(index, newVal) {
-        const newDataVisChartType = dataVisChartType.slice();
-        newDataVisChartType[index] = newVal;
-        setDataVisChartType(newDataVisChartType);
-        localStorage.setItem('dataVisChartType', JSON.stringify(newDataVisChartType), { expires: 365 });
-    }
-
-    function setDataVisDataTypeSingle(index, newVal) {
-        const newDataVisData = dataVisData.slice();
-        newDataVisData[index] = newVal;
-        setdataVisData(newDataVisData);
-        localStorage.setItem('dataVisData', JSON.stringify(newDataVisData), { expires: 365 });
+    function setDataVisEntry(index, key, newVal) {
+        setChartDefinitions((old) => {
+            const newChartDefinitions = old.slice();
+            newChartDefinitions[index][key] = newVal;
+            localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
+            return newChartDefinitions;
+        });
     }
 
     function removeChart(index) {
-        const newDataVisChartType = dataVisChartType.slice(0, index).concat(dataVisChartType.slice(index + 1));
-        const newdataVisData = dataVisData.slice(0, index).concat(dataVisData.slice(index + 1));
-        const newDataVisTrim = dataVisTrim.slice(0, index).concat(dataVisTrim.slice(index + 1));
-        setDataVisChartType(newDataVisChartType);
-        setdataVisData(newdataVisData);
-        setDataVisTrim(newDataVisTrim);
-        localStorage.setItem('dataVisData', JSON.stringify(newdataVisData), { expires: 365 });
-        localStorage.setItem('dataVisChartType', JSON.stringify(newDataVisChartType), { expires: 365 });
-        localStorage.setItem('dataVisTrim', JSON.stringify(newDataVisTrim), { expires: 365 });
+        const newChartDefinitions = chartDefinitions.slice(0, index).concat(chartDefinitions.slice(index + 1));
+        setChartDefinitions(newChartDefinitions);
+        localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
     }
 
     function AddChart(data, chartType) {
         setOpen(false);
-        const newdataVisData = [...dataVisData, data];
-        const newDataVisChartType = [...dataVisChartType, validStackedCharts.includes(data) ? 'bar' : chartType];
-        const newDataVisTrim = [...dataVisTrim, false];
-        setDataVisChartType(newDataVisChartType);
-        setdataVisData(newdataVisData);
-        setDataVisTrim(newDataVisTrim);
-        localStorage.setItem('dataVisChartType', JSON.stringify(newDataVisChartType), { expires: 365 });
-        localStorage.setItem('dataVisTrim', JSON.stringify(newDataVisTrim), { expires: 365 });
-        localStorage.setItem('dataVisData', JSON.stringify(newdataVisData), { expires: 365 });
+        setChartDefinitions((old) => {
+            const newDefs = old.slice();
+            newDefs.push({
+                data,
+                chartType: validStackedCharts.includes(data) ? 'bar' : chartType,
+                trim: false
+            });
+            localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newDefs), { expires: 365 });
+            return newDefs;
+        });
     }
     /* eslint-disable jsx-a11y/no-onchange */
     function returnChartDialog() {
@@ -172,7 +188,7 @@ function DataVisualization() {
                     <form>
                         <label htmlFor="types" style={{ paddingRight: '1em' }}>
                             Data: &nbsp;
-                            <select value={dataValue} name="types" id="types" onChange={(event) => setDataValue(event.target.value)}>
+                            <select value={newDataKey} name="types" id="types" onChange={(event) => setNewDataKey(event.target.value)}>
                                 {Object.keys(dataVis).map((key) => (
                                     <option key={key} value={key}>
                                         {DataVisualizationChartInfo[key].title}
@@ -180,17 +196,22 @@ function DataVisualization() {
                                 ))}
                             </select>
                         </label>
-                        {validStackedCharts.includes(dataValue) ? (
+                        {validStackedCharts.includes(newDataKey) ? (
                             <label htmlFor="types">
                                 Chart Types: &nbsp;
-                                <select value="bar" name="types" id="types" onChange={(event) => setChartType(event.target.value)}>
+                                <select value="bar" name="types" id="types" onChange={(event) => setNewChartType(event.target.value)}>
                                     <option value="bar">Stacked Bar</option>
                                 </select>
                             </label>
                         ) : (
                             <label htmlFor="types">
                                 Chart Types: &nbsp;
-                                <select value={chartType} name="types" id="types" onChange={(event) => setChartType(event.target.value)}>
+                                <select
+                                    value={newChartType}
+                                    name="types"
+                                    id="types"
+                                    onChange={(event) => setNewChartType(event.target.value)}
+                                >
                                     <option value="bar">Bar</option>
                                     <option value="line">Line</option>
                                     <option value="column">Column</option>
@@ -202,7 +223,7 @@ function DataVisualization() {
                     </form>
                     <DialogActions>
                         <Button onClick={handleToggleDialog}>Cancel</Button>
-                        <Button onClick={() => AddChart(dataValue, chartType || 'bar')}>Confirm</Button>
+                        <Button onClick={() => AddChart(newDataKey, newChartType || 'bar')}>Confirm</Button>
                     </DialogActions>
                 </DialogContent>
             </Dialog>
@@ -210,24 +231,24 @@ function DataVisualization() {
     }
 
     function returndataVisData() {
-        const data = dataVisData.map((item, index) => (
-            <Grid item xs={12} sm={12} md={6} lg={3} xl={3} key={item + index}>
+        const data = chartDefinitions.map((item, index) => (
+            <Grid item xs={12} sm={12} md={6} lg={3} xl={3} key={index}>
                 <CustomOfflineChart
                     dataObject=""
                     dataVis={dataVis}
-                    data={item}
+                    data={item.data}
                     index={index}
-                    chartType={dataVisChartType[index]}
+                    chartType={item.chartType}
                     height="400px; auto"
                     dropDown
                     onRemoveChart={() => removeChart(index)}
                     edit={edit}
-                    orderByFrequency={item !== 'diagnosis_age_count'}
-                    orderAlphabetically={item === 'diagnosis_age_count'}
-                    trimByDefault={dataVisTrim[index]}
-                    onChangeDataVisChartType={(newType) => setDataVisChartTypeSingle(index, newType)}
-                    onChangeDataVisData={(newData) => setDataVisDataTypeSingle(index, newData)}
-                    loading={dataVis[item] === undefined}
+                    orderByFrequency={item.data !== 'diagnosis_age_count'}
+                    orderAlphabetically={item.data === 'diagnosis_age_count'}
+                    trimByDefault={item.trim}
+                    onChangeDataVisChartType={(newType) => setDataVisEntry(index, 'chartType', newType)}
+                    onChangeDataVisData={(newData) => setDataVisEntry(index, 'data', newData)}
+                    loading={dataVis[item.data] === undefined}
                 />
             </Grid>
         ));
