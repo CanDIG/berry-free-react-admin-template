@@ -44,7 +44,7 @@ const DEFAULT_CHART_DEFINITIONS = [
     }
 ];
 
-const LOCAL_VARIABLE_KEY = 'chartDefinitions';
+export const LOCAL_VARIABLE_KEY = 'chartDefinitions';
 
 function DataVisualization() {
     // Hooks
@@ -99,6 +99,17 @@ function DataVisualization() {
         return newDataObj;
     };
 
+    const removeInvalidCharts = (chartDefinitions) => {
+        const retVal = [];
+        for (let i = 0; i < chartDefinitions.length; i += 1) {
+            if (VALID_CHART_TYPES.includes(chartDefinitions[i].chartType) && typeof chartDefinitions[i].trim === 'boolean') {
+                retVal.push(chartDefinitions[i]);
+            }
+        }
+
+        return retVal;
+    };
+
     const dataVis = {
         patients_per_program: handleCensoring('patients_per_program', (site, _) => site, true) || {},
         diagnosis_age_count: handleCensoring('age_at_diagnosis', (_, age) => age.replace(/ Years$/, '')) || {},
@@ -113,7 +124,9 @@ function DataVisualization() {
 
     // LocalStorage
     const [chartDefinitions, setChartDefinitions] = useState(
-        localStorage.getItem(LOCAL_VARIABLE_KEY) ? JSON.parse(localStorage.getItem(LOCAL_VARIABLE_KEY)) : DEFAULT_CHART_DEFINITIONS
+        localStorage.getItem(LOCAL_VARIABLE_KEY)
+            ? removeInvalidCharts(JSON.parse(localStorage.getItem(LOCAL_VARIABLE_KEY)))
+            : DEFAULT_CHART_DEFINITIONS
     );
     const [newDataKey, setNewDataKey] = useState('patients_per_program');
     const [newChartType, setNewChartType] = useState('bar');
@@ -122,7 +135,7 @@ function DataVisualization() {
     useEffect(() => {
         const invalidChartIndexes = [];
         for (let i = 0; i < chartDefinitions.length; i += 1) {
-            if (!VALID_CHART_TYPES.includes(chartDefinitions[i])) {
+            if (!VALID_CHART_TYPES.includes(chartDefinitions[i].chartType)) {
                 invalidChartIndexes.push(i);
             }
         }

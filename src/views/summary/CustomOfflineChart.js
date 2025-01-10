@@ -20,11 +20,12 @@ import MainCard from 'ui-component/cards/MainCard';
 import { DataVisualizationChartInfo, validCharts, validStackedCharts } from 'store/constant';
 import { HAS_CENSORED_DATA_MARKER } from 'utils/utils';
 import config from 'config';
+import { LOCAL_VARIABLE_KEY } from 'views/clinicalGenomic/widgets/dataVisualization';
 
 window.Highcharts = Highcharts;
 
-// Used to ensure that we are not parsed an invalid chart type
-export const VALID_CHART_TYPES = [];
+// Used to ensure that we are not passed an invalid chart type
+export const VALID_CHART_TYPES = ['bar', 'line', 'column', 'scatter', 'pie'];
 
 /*
  * Component for offline chart
@@ -390,25 +391,11 @@ function CustomOfflineChart({
         theme.palette.tertiary
     ]);
 
-    function setLocalStorageDataVisChart(event) {
+    function setLocalStorageDataVis(event, key) {
         // Set LocalStorage for Data Visualization Chart Type
-        const dataVisChart = JSON.parse(localStorage.getItem('dataVisChartType'));
-        dataVisChart[index] = event.target.value;
-        localStorage.setItem('dataVisChartType', JSON.stringify(dataVisChart), { expires: 365 });
-    }
-
-    function setLocalStorageDataVisData(event) {
-        // Set LocalStorage for Data Visualization Data
-        const dataVisData = JSON.parse(localStorage.getItem('dataVisData'));
-        dataVisData[index] = event.target.value;
-        localStorage.setItem('dataVisData', JSON.stringify(dataVisData), { expires: 365 });
-    }
-
-    function setLocalStorageDataVisTrim(value) {
-        // Set LocalStorage for Data Visualization Trim status
-        const dataVisTrim = JSON.parse(localStorage.getItem('dataVisTrim'));
-        dataVisTrim[index] = value;
-        localStorage.setItem('dataVisTrim', JSON.stringify(dataVisTrim), { expires: 365 });
+        const dataVisChart = JSON.parse(localStorage.getItem(LOCAL_VARIABLE_KEY));
+        dataVisChart[index][key] = event.target.value;
+        localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(dataVisChart), { expires: 365 });
     }
 
     /* eslint-disable jsx-a11y/no-onchange */
@@ -462,7 +449,7 @@ function CustomOfflineChart({
                                     onChange={(event) => {
                                         setChartData(event.target.value);
                                         onChangeDataVisData(event.target.value);
-                                        setLocalStorageDataVisData(event);
+                                        setLocalStorageDataVis(event, 'data');
                                     }}
                                 >
                                     {Object.keys(dataVis).map((key) => (
@@ -484,7 +471,7 @@ function CustomOfflineChart({
                                         onChange={(event) => {
                                             setChart(event.target.value);
                                             onChangeDataVisChartType(event.target.value);
-                                            setLocalStorageDataVisChart(event);
+                                            setLocalStorageDataVis(event, 'chartType');
                                         }}
                                     >
                                         <option value="bar">Stacked Bar</option>
@@ -500,7 +487,7 @@ function CustomOfflineChart({
                                         onChange={(event) => {
                                             setChart(event.target.value);
                                             onChangeDataVisChartType(event.target.value);
-                                            setLocalStorageDataVisChart(event);
+                                            setLocalStorageDataVis(event, 'chartType');
                                         }}
                                     >
                                         <option value="bar">Bar</option>
@@ -517,7 +504,7 @@ function CustomOfflineChart({
                                         type="checkbox"
                                         id="trim"
                                         onChange={() => {
-                                            setLocalStorageDataVisTrim(!trim);
+                                            setLocalStorageDataVis(!trim, 'trim');
                                             setTrim((old) => !old);
                                         }}
                                         checked={trim}
