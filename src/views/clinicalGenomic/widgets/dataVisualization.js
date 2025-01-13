@@ -133,16 +133,22 @@ function DataVisualization() {
     useEffect(() => {
         const invalidChartIndexes = [];
         for (let i = 0; i < chartDefinitions.length; i += 1) {
+            // If this is not a valid chart type, remove it
             if (!VALID_CHART_TYPES.includes(chartDefinitions[i].chartType)) {
+                invalidChartIndexes.push(i);
+            }
+            // If the data has loaded, but does not exist, then we also remove it
+            else if (!Object.keys(dataVis).includes(chartDefinitions[i].data)) {
                 invalidChartIndexes.push(i);
             }
         }
 
         if (invalidChartIndexes.length > 0) {
             setChartDefinitions((old) => {
-                const newChartDefinitions = old.slice();
+                let newChartDefinitions = old.slice();
                 invalidChartIndexes.forEach((index, numRemoved) => {
-                    newChartDefinitions.slice(index - numRemoved);
+                    const indexToRemove = index - numRemoved;
+                    newChartDefinitions = newChartDefinitions.slice(0, indexToRemove).concat(old.slice(indexToRemove + 1));
                 });
                 localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
                 return newChartDefinitions;
@@ -174,7 +180,6 @@ function DataVisualization() {
         setChartDefinitions((old) => {
             const newChartDefinitions = old.slice(0, index).concat(old.slice(index + 1));
             localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
-            console.log(newChartDefinitions);
             return newChartDefinitions;
         });
     }
@@ -276,30 +281,27 @@ function DataVisualization() {
                     Data Visualization
                 </Typography>
                 <Grid container spacing={1} alignItems="center" justifyContent="center">
-                    {chartDefinitions.map((item, index) => {
-                        console.log(item);
-                        return (
-                            <Grid item xs={12} sm={12} md={6} lg={3} xl={3} key={JSON.stringify(item)}>
-                                <CustomOfflineChart
-                                    dataObject=""
-                                    dataVis={dataVis}
-                                    data={item.data}
-                                    index={index}
-                                    chartType={item.chartType}
-                                    height="400px; auto"
-                                    dropDown
-                                    onRemoveChart={() => removeChart(index)}
-                                    edit={edit}
-                                    orderByFrequency={item.data !== 'diagnosis_age_count'}
-                                    orderAlphabetically={item.data === 'diagnosis_age_count'}
-                                    trimByDefault={item.trim}
-                                    onChangeDataVisChartType={(newType) => setDataVisEntry(index, 'chartType', newType)}
-                                    onChangeDataVisData={(newData) => setDataVisEntry(index, 'data', newData)}
-                                    loading={dataVis[item.data] === undefined}
-                                />
-                            </Grid>
-                        );
-                    })}
+                    {chartDefinitions.map((item, index) => (
+                        <Grid item xs={12} sm={12} md={6} lg={3} xl={3} key={JSON.stringify(item)}>
+                            <CustomOfflineChart
+                                dataObject=""
+                                dataVis={dataVis}
+                                data={item.data}
+                                index={index}
+                                chartType={item.chartType}
+                                height="400px; auto"
+                                dropDown
+                                onRemoveChart={() => removeChart(index)}
+                                edit={edit}
+                                orderByFrequency={item.data !== 'diagnosis_age_count'}
+                                orderAlphabetically={item.data === 'diagnosis_age_count'}
+                                trimByDefault={item.trim}
+                                onChangeDataVisChartType={(newType) => setDataVisEntry(index, 'chartType', newType)}
+                                onChangeDataVisData={(newData) => setDataVisEntry(index, 'data', newData)}
+                                loading={dataVis[item.data] === undefined}
+                            />
+                        </Grid>
+                    ))}
                 </Grid>
             </Grid>
             {edit && (
