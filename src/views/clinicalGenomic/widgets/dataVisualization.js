@@ -171,9 +171,12 @@ function DataVisualization() {
     }
 
     function removeChart(index) {
-        const newChartDefinitions = chartDefinitions.slice(0, index).concat(chartDefinitions.slice(index + 1));
-        setChartDefinitions(newChartDefinitions);
-        localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
+        setChartDefinitions((old) => {
+            const newChartDefinitions = old.slice(0, index).concat(old.slice(index + 1));
+            localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
+            console.log(newChartDefinitions);
+            return newChartDefinitions;
+        });
     }
 
     function AddChart(data, chartType) {
@@ -241,32 +244,6 @@ function DataVisualization() {
         );
     }
 
-    function returndataVisData() {
-        const data = chartDefinitions.map((item, index) => (
-            <Grid item xs={12} sm={12} md={6} lg={3} xl={3} key={index}>
-                <CustomOfflineChart
-                    dataObject=""
-                    dataVis={dataVis}
-                    data={item.data}
-                    index={index}
-                    chartType={item.chartType}
-                    height="400px; auto"
-                    dropDown
-                    onRemoveChart={() => removeChart(index)}
-                    edit={edit}
-                    orderByFrequency={item.data !== 'diagnosis_age_count'}
-                    orderAlphabetically={item.data === 'diagnosis_age_count'}
-                    trimByDefault={item.trim}
-                    onChangeDataVisChartType={(newType) => setDataVisEntry(index, 'chartType', newType)}
-                    onChangeDataVisData={(newData) => setDataVisEntry(index, 'data', newData)}
-                    loading={dataVis[item.data] === undefined}
-                />
-            </Grid>
-        ));
-
-        return data;
-    }
-
     return (
         <Box
             mr={1}
@@ -299,7 +276,30 @@ function DataVisualization() {
                     Data Visualization
                 </Typography>
                 <Grid container spacing={1} alignItems="center" justifyContent="center">
-                    {returndataVisData()}
+                    {chartDefinitions.map((item, index) => {
+                        console.log(item);
+                        return (
+                            <Grid item xs={12} sm={12} md={6} lg={3} xl={3} key={JSON.stringify(item)}>
+                                <CustomOfflineChart
+                                    dataObject=""
+                                    dataVis={dataVis}
+                                    data={item.data}
+                                    index={index}
+                                    chartType={item.chartType}
+                                    height="400px; auto"
+                                    dropDown
+                                    onRemoveChart={() => removeChart(index)}
+                                    edit={edit}
+                                    orderByFrequency={item.data !== 'diagnosis_age_count'}
+                                    orderAlphabetically={item.data === 'diagnosis_age_count'}
+                                    trimByDefault={item.trim}
+                                    onChangeDataVisChartType={(newType) => setDataVisEntry(index, 'chartType', newType)}
+                                    onChangeDataVisData={(newData) => setDataVisEntry(index, 'data', newData)}
+                                    loading={dataVis[item.data] === undefined}
+                                />
+                            </Grid>
+                        );
+                    })}
                 </Grid>
             </Grid>
             {edit && (

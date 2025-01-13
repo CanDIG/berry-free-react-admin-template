@@ -384,6 +384,7 @@ function CustomOfflineChart({
         dataObject,
         grayscale,
         height,
+        index,
         orderAlphabetically,
         orderByFrequency,
         theme.palette.grey,
