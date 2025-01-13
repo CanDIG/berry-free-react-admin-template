@@ -20,12 +20,13 @@ import MainCard from 'ui-component/cards/MainCard';
 import { DataVisualizationChartInfo, validCharts, validStackedCharts } from 'store/constant';
 import { HAS_CENSORED_DATA_MARKER } from 'utils/utils';
 import config from 'config';
-import { LOCAL_VARIABLE_KEY } from 'views/clinicalGenomic/widgets/dataVisualization';
 
 window.Highcharts = Highcharts;
 
 // Used to ensure that we are not passed an invalid chart type
 export const VALID_CHART_TYPES = ['bar', 'line', 'column', 'scatter', 'pie'];
+// Defined here in order to prevent a circular dependancy
+export const VISUALIZATION_LOCAL_STORAGE_KEY = 'chartDefinitions';
 
 /*
  * Component for offline chart

@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import { IconEdit, IconX, IconPlus } from '@tabler/icons-react';
 
 // Custom Components and context
-import CustomOfflineChart, { VALID_CHART_TYPES } from 'views/summary/CustomOfflineChart';
+import CustomOfflineChart, { VALID_CHART_TYPES, VISUALIZATION_LOCAL_STORAGE_KEY } from 'views/summary/CustomOfflineChart';
 import { useSearchResultsReaderContext } from '../SearchResultsContext';
 
 // Constants
@@ -43,8 +43,6 @@ const DEFAULT_CHART_DEFINITIONS = [
         trim: false
     }
 ];
-
-export const LOCAL_VARIABLE_KEY = 'chartDefinitions';
 
 function DataVisualization() {
     // Hooks
@@ -124,8 +122,8 @@ function DataVisualization() {
 
     // LocalStorage
     const [chartDefinitions, setChartDefinitions] = useState(
-        localStorage.getItem(LOCAL_VARIABLE_KEY)
-            ? removeInvalidCharts(JSON.parse(localStorage.getItem(LOCAL_VARIABLE_KEY)))
+        localStorage.getItem(VISUALIZATION_LOCAL_STORAGE_KEY)
+            ? removeInvalidCharts(JSON.parse(localStorage.getItem(VISUALIZATION_LOCAL_STORAGE_KEY)))
             : DEFAULT_CHART_DEFINITIONS
     );
     const [newDataKey, setNewDataKey] = useState('patients_per_program');
@@ -146,7 +144,7 @@ function DataVisualization() {
                 invalidChartIndexes.forEach((index, numRemoved) => {
                     newChartDefinitions.slice(index - numRemoved);
                 });
-                localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
+                localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
                 return newChartDefinitions;
             });
         }
@@ -155,7 +153,7 @@ function DataVisualization() {
     // Intial localStorage setting if there are none
     useEffect(() => {
         if (!localStorage.getItem('LOCAL_VARIABLE_KEY')) {
-            localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(chartDefinitions), { expires: 365 });
+            localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(chartDefinitions), { expires: 365 });
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -167,7 +165,7 @@ function DataVisualization() {
         setChartDefinitions((old) => {
             const newChartDefinitions = old.slice();
             newChartDefinitions[index][key] = newVal;
-            localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
+            localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
             return newChartDefinitions;
         });
     }
@@ -175,7 +173,7 @@ function DataVisualization() {
     function removeChart(index) {
         const newChartDefinitions = chartDefinitions.slice(0, index).concat(chartDefinitions.slice(index + 1));
         setChartDefinitions(newChartDefinitions);
-        localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
+        localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newChartDefinitions), { expires: 365 });
     }
 
     function AddChart(data, chartType) {
@@ -187,7 +185,7 @@ function DataVisualization() {
                 chartType: validStackedCharts.includes(data) ? 'bar' : chartType,
                 trim: false
             });
-            localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(newDefs), { expires: 365 });
+            localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(newDefs), { expires: 365 });
             return newDefs;
         });
     }
