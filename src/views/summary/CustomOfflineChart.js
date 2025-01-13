@@ -394,9 +394,9 @@ function CustomOfflineChart({
 
     function setLocalStorageDataVis(event, key) {
         // Set LocalStorage for Data Visualization Chart Type
-        const dataVisChart = JSON.parse(localStorage.getItem(LOCAL_VARIABLE_KEY));
+        const dataVisChart = JSON.parse(localStorage.getItem(VISUALIZATION_LOCAL_STORAGE_KEY));
         dataVisChart[index][key] = event.target.value;
-        localStorage.setItem(LOCAL_VARIABLE_KEY, JSON.stringify(dataVisChart), { expires: 365 });
+        localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(dataVisChart), { expires: 365 });
     }
 
     /* eslint-disable jsx-a11y/no-onchange */

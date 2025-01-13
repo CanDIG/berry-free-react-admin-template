@@ -152,7 +152,7 @@ function DataVisualization() {
 
     // Intial localStorage setting if there are none
     useEffect(() => {
-        if (!localStorage.getItem('LOCAL_VARIABLE_KEY')) {
+        if (!localStorage.getItem(VISUALIZATION_LOCAL_STORAGE_KEY)) {
             localStorage.setItem(VISUALIZATION_LOCAL_STORAGE_KEY, JSON.stringify(chartDefinitions), { expires: 365 });
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
